@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:15.5-alpine
+    environment:
+      POSTGRES_DB: shorty
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: toor
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - postgres_network
+    ports:
+      - "5432:5432"  # Expose port 5432 on the host
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    networks:
+      - postgres_network
+
+volumes:
+  postgres_data:
+
+networks:
+  postgres_network:
+    driver: bridge

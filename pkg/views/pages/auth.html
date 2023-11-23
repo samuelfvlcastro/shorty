@@ -1,0 +1,17 @@
+{{template "index"}}
+{{define "content"}}
+<div class="hero h-[calc(100vh-64px-52px)]">
+  <div class="hero-overlay bg-opacity-60 bg-primary"></div>
+  <div class="hero-content text-center text-neutral-content">
+    <div class="max-w-md">
+      <div class="card w-96 bg-base-100 shadow-xl">
+        <div class="card-body items-center text-center">
+          <h1 class="mb-2 text-xl lg:text-4xl font-bold text-primary">Let's Start shortening!</h1>
+          <p class="mb-2 lg:text-xl text-primary">Create an account with one of the following methods</p>
+          {{template "components/auth/google"}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

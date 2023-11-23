@@ -1,0 +1,7 @@
+# Base
+.vscode
+.env
+
+# Application
+tmp
+node_modules

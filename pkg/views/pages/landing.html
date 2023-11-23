@@ -1,0 +1,24 @@
+{{template "index" . }}
+{{define "content"}}
+<div class="hero h-[calc(100vh-64px-52px)]">
+  <div class="hero-overlay bg-opacity-60 bg-primary"></div>
+  <div class="hero-content text-center text-neutral-content">
+    <div class="flex flex-col justify-between gap-4">
+      <div class="max-w-md">
+        <h1 class="mb-6 text-5xl font-bold text-white">Shorter Links, Bigger Connections</h1>
+        <div class="join w-full">
+          <form hx-post="/url" enctype="multipart/form-data" hx-swap="innerHTML" hx-target="#urlList"
+            class="join w-full mx-4 lg:mx-0">
+            <input type="text" required name="long_url" placeholder="insert your link here..."
+              class="input input-bordered input-primary w-full join-item text-gray-600" />
+            <button class="btn btn-primary join-item text-white">Shorten it!</button>
+          </form>
+        </div>
+      </div>
+      <div>
+        {{template "components/url/list" . }}
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
