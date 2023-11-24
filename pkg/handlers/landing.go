@@ -5,6 +5,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"smashedbits.com/shorty/pkg/services"
+	"smashedbits.com/shorty/pkg/views/components/url"
+	"smashedbits.com/shorty/pkg/views/layouts"
+	"smashedbits.com/shorty/pkg/views/pages"
 )
 
 func Landing(auth services.Authenticator, shortener services.Shortener) echo.HandlerFunc {
@@ -12,17 +15,19 @@ func Landing(auth services.Authenticator, shortener services.Shortener) echo.Han
 		req := eCtx.Request()
 		ctx := req.Context()
 
-		userId, _ := eCtx.Get("userId").(string)
-		urls, err := shortener.GetUserURLs(ctx, userId)
+		user, _ := auth.GetUser(eCtx)
+		urls, err := shortener.GetUserURLs(ctx, user.ID)
 		if err != nil {
 			eCtx.Logger().Error(err)
 		}
 
-		if err := eCtx.Render(http.StatusOK, "pages/landing.html", map[string]interface{}{
-			"Urls": urls,
-		}); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		p := &pages.Landing{
+			UserIdStg:    user.ID,
+			UserEmailStg: user.Email,
+			Urls:         urls,
 		}
+		layouts.WriteBaseLayout(eCtx.Response().Writer, p)
+
 		return nil
 	}
 }
@@ -51,8 +56,7 @@ func InsertURL(auth services.Authenticator, shortener services.Shortener) echo.H
 			return echo.NewHTTPError(http.StatusInternalServerError, "something went wrong")
 		}
 
-		return eCtx.Render(http.StatusOK, "components/url/list", map[string]interface{}{
-			"Urls": urls,
-		})
+		eCtx.Response().Writer.Write([]byte(url.RenderList(urls)))
+		return nil
 	}
 }

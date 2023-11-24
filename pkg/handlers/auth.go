@@ -6,11 +6,20 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"smashedbits.com/shorty/pkg/services"
+	"smashedbits.com/shorty/pkg/views/layouts"
+	"smashedbits.com/shorty/pkg/views/pages"
 )
 
-func AuthenticationPage() echo.HandlerFunc {
+func AuthenticationPage(auth services.Authenticator) echo.HandlerFunc {
 	return func(eCtx echo.Context) error {
-		return eCtx.Render(http.StatusOK, "pages/auth.html", map[string]interface{}{})
+		user, _ := auth.GetUser(eCtx)
+
+		a := &pages.Auth{
+			UserIdStg:    user.ID,
+			UserEmailStg: user.Email,
+		}
+		layouts.WriteBaseLayout(eCtx.Response().Writer, a)
+		return nil
 	}
 }
 

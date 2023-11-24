@@ -12,3 +12,6 @@ migrate_down:
 
 migrate_fix:
 	migrate -path database/migrations -database "postgresql://root:toor@127.0.0.1:5432/shorty?sslmode=disable" -verbose force 1
+
+install:
+	go install github.com/valyala/quicktemplate/qtc

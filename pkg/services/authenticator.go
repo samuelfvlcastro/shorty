@@ -34,6 +34,16 @@ func NewAuthenticator(store userStorage, jwtSigningKey string) Authenticator {
 	}
 }
 
+func (u Authenticator) GetUser(eCtx echo.Context) (model.User, error) {
+	userId, err := u.GetUserID(eCtx)
+	if err != nil {
+		return model.User{}, err
+	}
+
+	ctx := eCtx.Request().Context()
+	return u.store.GetByID(ctx, userId)
+}
+
 func (u Authenticator) GetUserID(eCtx echo.Context) (string, error) {
 	jwtStg, err := u.GetJWTCookie(eCtx)
 	if err != nil {

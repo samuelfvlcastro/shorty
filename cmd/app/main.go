@@ -1,3 +1,5 @@
+//go:generate go get -u github.com/valyala/quicktemplate/qtc
+//go:generate qtc -dir=../../pkg/views
 package main
 
 import (
@@ -19,7 +21,6 @@ import (
 	"smashedbits.com/shorty/pkg/router"
 	"smashedbits.com/shorty/pkg/services"
 	"smashedbits.com/shorty/pkg/storage"
-	"smashedbits.com/shorty/pkg/views"
 )
 
 func main() {
@@ -76,7 +77,6 @@ func main() {
 
 func bootstrap(ctx *cli.Context) error {
 	port := ctx.Int("PORT")
-	domain := ctx.String("DOMAIN")
 	dbURI := ctx.String("DATABASE_URI")
 	jwtSigningKey := ctx.String("JWT_SIGNING_KEY")
 	sessionSecret := ctx.String("SESSION_SECRET")
@@ -85,7 +85,6 @@ func bootstrap(ctx *cli.Context) error {
 	googleCallback := ctx.String("GOOGLE_CALLBACK")
 
 	app := echo.New()
-	app.Renderer = views.NewRenderer(domain)
 	app.Pre(middleware.RemoveTrailingSlash())
 
 	conn, err := pgx.Connect(ctx.Context, dbURI)

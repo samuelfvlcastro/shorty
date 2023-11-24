@@ -20,34 +20,13 @@ func SecureRoute(auth services.Authenticator) echo.MiddlewareFunc {
 	})
 }
 
-func AddUserIdToCtx(auth services.Authenticator) echo.MiddlewareFunc {
-	return AddUserIdToCtxWithConfig(SecureRouteConfig{
-		auth: auth,
-	})
-}
-
 func SecureRouteWithConfig(config SecureRouteConfig) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(eCtx echo.Context) (err error) {
-			userId, err := config.auth.GetUserID(eCtx)
-			if err != nil {
+			if _, err := config.auth.GetUserID(eCtx); err != nil {
 				htmxAuthRedirect(eCtx)
 				return eCtx.JSON(http.StatusUnauthorized, nil)
 			}
-			eCtx.Set("userId", userId)
-			return next(eCtx)
-		}
-	}
-}
-
-func AddUserIdToCtxWithConfig(config SecureRouteConfig) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(eCtx echo.Context) (err error) {
-			userId, err := config.auth.GetUserID(eCtx)
-			if err != nil {
-				return next(eCtx)
-			}
-			eCtx.Set("userId", userId)
 			return next(eCtx)
 		}
 	}

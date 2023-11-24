@@ -11,20 +11,16 @@ func InitRoutes(app *echo.Echo, auth services.Authenticator, shortener services.
 	app.Static("/dist", "ui/dist")
 	app.Static("/css", "ui/src/css")
 
-	mainRoutes := app.Group("")
-	mainRoutes.Use(middleware.AddUserIdToCtx(auth))
+	mainRoutes := app.Group("",
+		middleware.GothProviderPrefill(),
+		middleware.NoCache(),
+	)
 	mainRoutes.GET("/", handlers.Landing(auth, shortener))
+	mainRoutes.GET("/auth", handlers.AuthenticationPage(auth))
+	mainRoutes.GET("/auth/:provider", handlers.AuthProvider(auth))
+	mainRoutes.GET("/auth/:provider/callback", handlers.AuthProviderCallback(auth))
+	mainRoutes.GET("/auth/logout", handlers.AuthProviderLogout(auth))
 
-	secureRoutes := app.Group("")
-	secureRoutes.Use(middleware.SecureRoute(auth))
+	secureRoutes := app.Group("", middleware.SecureRoute(auth))
 	secureRoutes.POST("/url", handlers.InsertURL(auth, shortener))
-
-	authRoutes := app.Group("/auth")
-	authRoutes.Use(middleware.GothProviderPrefill())
-	authRoutes.Use(middleware.NoCache())
-
-	authRoutes.GET("", handlers.AuthenticationPage())
-	authRoutes.GET("/:provider", handlers.AuthProvider(auth))
-	authRoutes.GET("/:provider/callback", handlers.AuthProviderCallback(auth))
-	authRoutes.GET("/logout", handlers.AuthProviderLogout(auth))
 }
