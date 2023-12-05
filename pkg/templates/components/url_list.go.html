@@ -1,14 +1,12 @@
-{% import "smashedbits.com/shorty/pkg/model" %}
-
-{% func RenderList(urls []model.URL) %}
+{{ define "url_list.go.html"}}
 <div class="flex flex-col rounded-box h-[calc(100vh-64px-48px-12rem-32px-52px)] p-2 gap-4">
   <div class="flex flex-col text-primary">
     <h3 class="text-2xl font-bold">Your Shortened URLs</h3>
   </div>
   <div class="overflow-y-auto">
-    {% for _, url := range urls %}
-      {%= RenderItem(url) %}
-    {% endfor %}
+    {{range $url := .Data }}
+    {{block "url_item.go.html" $url}}{{end}}
+    {{end}}
   </div>
 </div>
-{% endfunc %}
+{{end}}

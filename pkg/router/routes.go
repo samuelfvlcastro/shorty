@@ -7,20 +7,22 @@ import (
 	"smashedbits.com/shorty/pkg/services"
 )
 
-func InitRoutes(app *echo.Echo, auth services.Authenticator, shortener services.Shortener) {
+func InitRoutes(app *echo.Echo, renderer services.Renderer, auth services.Authenticator, shortener services.Shortener) {
 	app.Static("/dist", "ui/dist")
 	app.Static("/css", "ui/src/css")
 
 	mainRoutes := app.Group("",
 		middleware.GothProviderPrefill(),
-		middleware.NoCache(),
 	)
-	mainRoutes.GET("/", handlers.Landing(auth, shortener))
-	mainRoutes.GET("/auth", handlers.AuthenticationPage(auth))
+	mainRoutes.GET("/", handlers.Landing(renderer, auth, shortener))
+	mainRoutes.GET("/auth", handlers.AuthenticationPage(renderer, auth))
 	mainRoutes.GET("/auth/:provider", handlers.AuthProvider(auth))
 	mainRoutes.GET("/auth/:provider/callback", handlers.AuthProviderCallback(auth))
 	mainRoutes.GET("/auth/logout", handlers.AuthProviderLogout(auth))
 
-	secureRoutes := app.Group("", middleware.SecureRoute(auth))
-	secureRoutes.POST("/url", handlers.InsertURL(auth, shortener))
+	secureRoutes := app.Group("",
+		middleware.SecureRoute(auth),
+	)
+	secureRoutes.POST("/url", handlers.InsertURL(renderer, auth, shortener))
+	secureRoutes.POST("/user/darkmode/toggle", handlers.ToggleDarkMode(renderer, auth))
 }

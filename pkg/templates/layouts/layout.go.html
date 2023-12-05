@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html data-theme="emerald">
+
+<head>
+  <title>{{block "title" .}}{{end}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="dist/bundle.js"></script>
+</head>
+
+<body>
+  {{block "header.go.html" .}}{{end}}
+  {{block "content" .}}{{end}}
+  {{block "footer.go.html" .}}{{end}}
+</body>
+
+</html>

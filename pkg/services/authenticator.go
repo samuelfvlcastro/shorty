@@ -20,6 +20,7 @@ type userStorage interface {
 	GetByID(ctx context.Context, userId string) (model.User, error)
 	GetByEmail(ctx context.Context, email string) (model.User, error)
 	Insert(ctx context.Context, user model.User) error
+	UpdateUser(ctx context.Context, user model.User) error
 }
 
 type Authenticator struct {
@@ -42,6 +43,11 @@ func (u Authenticator) GetUser(eCtx echo.Context) (model.User, error) {
 
 	ctx := eCtx.Request().Context()
 	return u.store.GetByID(ctx, userId)
+}
+
+func (u Authenticator) UpdateUser(eCtx echo.Context, user model.User) error {
+	ctx := eCtx.Request().Context()
+	return u.store.UpdateUser(ctx, user)
 }
 
 func (u Authenticator) GetUserID(eCtx echo.Context) (string, error) {

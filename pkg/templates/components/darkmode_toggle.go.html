@@ -1,0 +1,5 @@
+{{ define "darkmode_toggle.go.html"}}
+<input type="checkbox" value="dark" {{if .User.DarkMode }}checked{{ end }} hx-post="/user/darkmode/toggle"
+  hx-trigger="click"
+  class="toggle theme-controller bg-primary hover:bg-primary row-start-1 col-start-1 col-span-2 border-primary" />
+{{end}}

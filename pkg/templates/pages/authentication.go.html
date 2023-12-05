@@ -1,16 +1,6 @@
-{% import "smashedbits.com/shorty/pkg/views/components/auth" %}
+{{template "layout.go.html" .}}
 
-{% code 
-  type Auth struct {
-    UserIdStg string
-    UserEmailStg string
-  } 
-%}
-{% func (a *Auth) Title() %}Sign in to continue{% endfunc %}
-{% func (a *Auth) UserId() %}{%s a.UserIdStg %}{% endfunc %}
-{% func (a *Auth) UserEmail()  %}{%s a.UserEmailStg %}{% endfunc %}
-
-{% func (a *Auth) Body() %}
+{{ define "content"}}
 <div class="hero h-[calc(100vh-64px-52px)]">
   <div class="hero-overlay bg-opacity-60 bg-primary"></div>
   <div class="hero-content text-center text-neutral-content">
@@ -19,10 +9,10 @@
         <div class="card-body items-center text-center">
           <h1 class="mb-2 text-xl lg:text-4xl font-bold text-primary">Let's Start shortening!</h1>
           <p class="mb-2 lg:text-xl text-primary">Create an account with one of the following methods</p>
-          {%= auth.RenderGoogleProvider() %}
+          {{block "google_auth_provider.go.html" .}}{{end}}
         </div>
       </div>
     </div>
   </div>
 </div>
-{% endfunc %}
+{{end}}

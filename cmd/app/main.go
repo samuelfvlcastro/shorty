@@ -1,5 +1,3 @@
-//go:generate go get -u github.com/valyala/quicktemplate/qtc
-//go:generate qtc -dir=../../pkg/views
 package main
 
 import (
@@ -103,8 +101,12 @@ func bootstrap(ctx *cli.Context) error {
 
 	auth := services.NewAuthenticator(userStore, jwtSigningKey)
 	shortener := services.NewShortener(urlStore)
+	renderer, err := services.NewRenderer()
+	if err != nil {
+		return err
+	}
 
-	router.InitRoutes(app, auth, shortener)
+	router.InitRoutes(app, renderer, auth, shortener)
 
 	return app.Start(fmt.Sprintf(":%d", port))
 }

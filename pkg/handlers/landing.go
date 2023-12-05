@@ -5,41 +5,44 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"smashedbits.com/shorty/pkg/services"
-	"smashedbits.com/shorty/pkg/views/components/url"
-	"smashedbits.com/shorty/pkg/views/layouts"
-	"smashedbits.com/shorty/pkg/views/pages"
 )
 
-func Landing(auth services.Authenticator, shortener services.Shortener) echo.HandlerFunc {
+func Landing(renderer services.Renderer, auth services.Authenticator, shortener services.Shortener) echo.HandlerFunc {
 	return func(eCtx echo.Context) error {
 		req := eCtx.Request()
 		ctx := req.Context()
 
-		user, _ := auth.GetUser(eCtx)
+		user, err := auth.GetUser(eCtx)
+		if err != nil {
+			eCtx.Logger().Debug(err)
+		}
+
 		urls, err := shortener.GetUserURLs(ctx, user.ID)
 		if err != nil {
 			eCtx.Logger().Error(err)
 		}
 
-		p := &pages.Landing{
-			UserIdStg:    user.ID,
-			UserEmailStg: user.Email,
-			Urls:         urls,
+		tmplVars := services.TemplateVars{
+			User: user,
+			Data: urls,
 		}
-		layouts.WriteBaseLayout(eCtx.Response().Writer, p)
+
+		if err := renderer.Render(eCtx, http.StatusOK, "landing.go.html", tmplVars); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err)
+		}
 
 		return nil
 	}
 }
 
-func InsertURL(auth services.Authenticator, shortener services.Shortener) echo.HandlerFunc {
+func InsertURL(renderer services.Renderer, auth services.Authenticator, shortener services.Shortener) echo.HandlerFunc {
 	return func(eCtx echo.Context) error {
 		req := eCtx.Request()
 		ctx := req.Context()
 
-		userId, ok := eCtx.Get("userId").(string)
-		if !ok {
-			return echo.NewHTTPError(http.StatusInternalServerError, "something went wrong")
+		user, err := auth.GetUser(eCtx)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, nil)
 		}
 
 		longURL := eCtx.FormValue("long_url")
@@ -47,16 +50,24 @@ func InsertURL(auth services.Authenticator, shortener services.Shortener) echo.H
 			return echo.NewHTTPError(http.StatusBadRequest, "missing long_url")
 		}
 
-		if _, err := shortener.InsertURL(ctx, userId, longURL); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		if _, err := shortener.InsertURL(ctx, user.ID, longURL); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "could not create url")
 		}
 
-		urls, err := shortener.GetUserURLs(ctx, userId)
+		urls, err := shortener.GetUserURLs(ctx, user.ID)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "something went wrong")
 		}
 
-		eCtx.Response().Writer.Write([]byte(url.RenderList(urls)))
+		tmplVars := services.TemplateVars{
+			User: user,
+			Data: urls,
+		}
+
+		if err := renderer.Render(eCtx, http.StatusOK, "landing.go.html", tmplVars); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err)
+		}
+
 		return nil
 	}
 }

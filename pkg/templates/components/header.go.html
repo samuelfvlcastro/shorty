@@ -1,14 +1,11 @@
-{% import "strings" %}
-
-{% func RenderHeader(userId string, userEmail string) %}
+{{ define "header.go.html"}}
 <div class="navbar bg-base-100">
   <div class="navbar-start">
     <a href="/" class="btn btn-ghost text-xl font-bold text-primary">SHORTY</a>
   </div>
   <div class="navbar-end gap-2">
     <label class="cursor-pointer grid place-items-center">
-      <input type="checkbox" value="dark"
-        class="toggle theme-controller bg-primary hover:bg-primary row-start-1 col-start-1 col-span-2 border-primary" />
+      {{block "darkmode_toggle.go.html" .}}{{end}}
       <svg class="col-start-1 row-start-1 stroke-base-100 fill-base-100" xmlns="http://www.w3.org/2000/svg" width="14"
         height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
         stroke-linejoin="round">
@@ -21,12 +18,12 @@
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
       </svg>
     </label>
-    {% if userId != "" %}
+    {{ if .User.ID }}
     <div class="dropdown dropdown-end">
       <label tabindex="0" class="btn btn-ghost btn-circle avatar">
         <div class="avatar placeholder">
           <div class="bg-primary text-neutral-content rounded-full w-8">
-            <span class="text-lg">{% if userEmail != "" %}{%s strings.ToUpper(userEmail[0:1]) %}{% endif %}</span>
+            <span class="text-lg">{{ if .User.Email }}{{ slice_first_and_up .User.Email }}{{ end }}</span>
           </div>
         </div>
       </label>
@@ -34,9 +31,9 @@
         <li><a href="/auth/logout">Logout</a></li>
       </ul>
     </div>
-    {% else %}
-      <a href="/auth" class="btn btn-sm btn-secondary">Sign in</a>
-    {% endif %}
+    {{ else }}
+    <a href="/auth" class="btn btn-sm btn-secondary">Sign in</a>
+    {{ end }}
   </div>
 </div>
-{% endfunc %}
+{{end}}

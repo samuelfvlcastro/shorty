@@ -1,4 +1,4 @@
-{% func RenderGoogleProvider() %}
+{{ define "google_auth_provider.go.html"}}
 <a href="/auth/start?provider=google" class="btn btn-outlinelg:btn-md min-w-full">
   <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
     <path
@@ -18,4 +18,4 @@
   </svg>
   Continue with Google
 </a>
-{% endfunc %}
+{{end}}

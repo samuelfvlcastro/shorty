@@ -1,18 +1,6 @@
-{% import "smashedbits.com/shorty/pkg/model" %}
-{% import urltpl "smashedbits.com/shorty/pkg/views/components/url" %}
+{{template "layout.go.html" .}}
 
-{% code 
-  type Landing struct {
-    UserIdStg string
-    UserEmailStg string
-    Urls []model.URL
-  } 
-%}
-{% func (l *Landing) Title() %}This is a base title{% endfunc %}
-{% func (l *Landing) UserId() %}{%s l.UserIdStg %}{% endfunc %}
-{% func (l *Landing) UserEmail()  %}{%s l.UserEmailStg %}{% endfunc %}
-
-{% func (l *Landing) Body() %}
+{{ define "content"}}
 <div class="hero h-[calc(100vh-64px-52px)]">
   <div class="hero-overlay bg-opacity-60 bg-primary"></div>
   <div class="hero-content text-center text-neutral-content">
@@ -29,9 +17,9 @@
         </div>
       </div>
       <div id="urlList">
-        {%= urltpl.RenderList(l.Urls) %}
+        {{block "url_list.go.html" .}}{{end}}
       </div>
     </div>
   </div>
 </div>
-{% endfunc %}
+{{end}}

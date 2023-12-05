@@ -1,9 +1,0 @@
-{% import "smashedbits.com/shorty/pkg/model" %}
-
-{% func RenderItem(url model.URL) %}
-<div class="flex items-center justify-center gap-2">
-  <a class="link link-neutral" href="{%s url.Hash %}" target="_blank">
-    shorty.dev/{%s url.Hash %}
-  </a>
-</div>
-{% endfunc %}

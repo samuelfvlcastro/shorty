@@ -2,9 +2,13 @@ package services
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 
 	"smashedbits.com/shorty/pkg/model"
 )
+
+const hashSalt = "aCoolHashSaltUsedForCollisions"
 
 type urlStorage interface {
 	GetURLs(ctx context.Context, userId string) ([]model.URL, error)
@@ -26,15 +30,22 @@ func (s Shortener) GetUserURLs(ctx context.Context, userId string) ([]model.URL,
 }
 
 func (s Shortener) InsertURL(ctx context.Context, userId string, longURL string) (model.URL, error) {
-	hash := "fewg34t52"
+	hash := s.hashFunc(longURL + hashSalt)
 	url := model.URL{
 		UserID:  userId,
-		Hash:    hash,
+		Hash:    hash[0:7],
 		LongURL: longURL,
 	}
+
 	if err := s.store.Insert(ctx, url); err != nil {
-		return url, err
+		saltedUrl := longURL + hashSalt
+		return s.InsertURL(ctx, userId, saltedUrl)
 	}
 
 	return url, nil
+}
+
+func (s Shortener) hashFunc(long string) string {
+	hash := md5.Sum([]byte(long))
+	return hex.EncodeToString(hash[:])
 }
