@@ -1,0 +1,15 @@
+{{ define "url_form.go.html"}}
+<div class="flex flex-col justify-between gap-4">
+  <div class="max-w-md">
+    <h1 class="mb-6 text-5xl font-bold text-white">Shorter Links, Bigger Connections</h1>
+    <div class="join w-full">
+      <div class="join w-full mx-4 lg:mx-0">
+        <input type="text" required name="long_url" placeholder="insert your link here..."
+          class="input input-bordered input-primary w-full join-item text-gray-600" />
+        <button class="btn btn-primary join-item text-white">Shorten it!</button>
+      </div>
+    </div>
+  </div>
+  {{block "url_list.go.html" .}}{{end}}
+</div>
+{{end}}

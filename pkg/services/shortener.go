@@ -11,6 +11,7 @@ import (
 const hashSalt = "aCoolHashSaltUsedForCollisions"
 
 type urlStorage interface {
+	GetURL(ctx context.Context, hash string) (model.URL, error)
 	GetURLs(ctx context.Context, userId string) ([]model.URL, error)
 	Insert(ctx context.Context, url model.URL) error
 }
@@ -23,6 +24,10 @@ func NewShortener(store urlStorage) Shortener {
 	return Shortener{
 		store: store,
 	}
+}
+
+func (s Shortener) GetURL(ctx context.Context, hash string) (model.URL, error) {
+	return s.store.GetURL(ctx, hash)
 }
 
 func (s Shortener) GetUserURLs(ctx context.Context, userId string) ([]model.URL, error) {

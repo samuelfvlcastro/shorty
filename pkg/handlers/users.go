@@ -23,7 +23,7 @@ func ToggleDarkMode(renderer services.Renderer, auth services.Authenticator) ech
 			User: user,
 		}
 
-		if err := renderer.Render(eCtx, http.StatusOK, "darkmode_toggle.go.html", tmplVars); err != nil {
+		if err := renderer.Render(eCtx, http.StatusOK, "components/darkmode_toggle.go.html", tmplVars); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
 

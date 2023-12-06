@@ -20,6 +20,8 @@ func InitRoutes(app *echo.Echo, renderer services.Renderer, auth services.Authen
 	mainRoutes.GET("/auth/:provider/callback", handlers.AuthProviderCallback(auth))
 	mainRoutes.GET("/auth/logout", handlers.AuthProviderLogout(auth))
 
+	mainRoutes.GET("/r/:hash", handlers.Redirect(shortener))
+
 	secureRoutes := app.Group("",
 		middleware.SecureRoute(auth),
 	)

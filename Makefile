@@ -4,11 +4,15 @@ start:
 start-ui:
 	cd ui && npm run dev
 
-migrate_up:
+
+start-database:
+	docker-compose up -d
+
+migrate-up:
 	migrate -path database/migrations -database "postgresql://root:toor@127.0.0.1:5432/shorty?sslmode=disable" -verbose up
 
-migrate_down:
+migrate-down:
 	migrate -path database/migrations -database "postgresql://root:toor@127.0.0.1:5432/shorty?sslmode=disable" -verbose down
 
-migrate_fix:
+migrate-fix:
 	migrate -path database/migrations -database "postgresql://root:toor@127.0.0.1:5432/shorty?sslmode=disable" -verbose force 1

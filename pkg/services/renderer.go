@@ -84,7 +84,8 @@ func (r *Renderer) Render(eCtx echo.Context, httpCode int, tmplName string, data
 	r.writeContentType(ContentTypeTextHTML, eCtx)
 	eCtx.Response().WriteHeader(httpCode)
 
-	return r.tmpls[tmplName].ExecuteTemplate(w, tmplName, data)
+	fileName := filepath.Base(tmplName)
+	return r.tmpls[tmplName].ExecuteTemplate(w, fileName, data)
 }
 
 func (r *Renderer) writeContentType(value string, eCtx echo.Context) {
